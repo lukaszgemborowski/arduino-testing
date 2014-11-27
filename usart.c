@@ -8,7 +8,7 @@ void usart_init(unsigned short ubrr)
   UBRR0L = ubrr;
 
   // enable TX & RX
-  UCSR0B|= (1<<TXEN0)|(1<<RXEN0);
+  UCSR0B |= (1<<TXEN0)|(1<<RXEN0);
 
   // [U]SART [S]top [B]it [S]elect:
   // 0 - 1 bit stop
@@ -20,13 +20,13 @@ void usart_init(unsigned short ubrr)
   // 010b - 7-bit
   // 011b - 8-bit
   // 111b - 9-bit
-  UCSR0C|= (1<<USBS0)|(3<<UCSZ00);
+  UCSR0C |= (1<<USBS0)|(3<<UCSZ00);
 }
 
 void usart_transmit_byte(unsigned char data)
 {
   // UDRE - [U]SART [D]ata [R]egister [E]mpty
-  while(!( UCSR0A & (1<<UDRE0)))
+  while(!(UCSR0A & (1<<UDRE0)))
     ;
  
   UDR0 = data;
@@ -36,7 +36,6 @@ void usart_transmit_string(const char *str)
 {
   while (*str)
   {
-    usart_transmit_byte(*str);
-    str++;
+    usart_transmit_byte(*str++);
   }
 }
