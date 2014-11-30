@@ -11,6 +11,8 @@ PORT := /dev/ttyUSB0
 MCU_GCC := atmega328p
 MCU_DUDE := m328p
 
+all : example.hex
+
 main.o : main.c
 	$(CXX) -DF_CPU=$(FREQ) -g -mmcu=$(MCU_GCC) -Os -o $@ -c $<
 
@@ -25,8 +27,6 @@ example.hex : example.elf
 
 flash : example.hex
 	$(DUDE) -p $(MCU_DUDE) -vvvv -c arduino -P $(PORT) -b $(BAUD) -D -U flash:w:$<:i
-
-all : example.hex
 
 clean :
 	rm -f example.hex example.elf main.o usart.o

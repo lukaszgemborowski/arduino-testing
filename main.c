@@ -14,7 +14,15 @@ int main()
   usart_init(UBRR_VALUE(9600));
 
   // send string to receiver
-  usart_transmit_string("Hello world!\r\n");
+  usart_transmit_string("Hello world!\r\nType something: ");
+  
+  // receive max 10 bytes
+  char buffer[10];
+  usart_receive_string(buffer, 10);
+  
+  // transmit buffer back to client
+  usart_transmit_string("\r\nReceived string: ");
+  usart_transmit_string(buffer);
 
   for (;;)
   {

@@ -23,6 +23,48 @@ void usart_init(unsigned short ubrr)
   UCSR0C |= (1<<USBS0)|(3<<UCSZ00);
 }
 
+unsigned char usart_receive_byte(void)
+{
+  while (!(UCSR0A & (1<<RXC0)))
+    ;
+  
+  return UDR0;
+}
+
+unsigned char usart_receive_string(char *buffer, unsigned short buffer_size)
+{
+  unsigned short pos = 0;
+  unsigned char data = 0;
+  
+  while(pos < buffer_size-1)
+  {
+    data = usart_receive_byte();
+    
+    if (data == '\r')
+    {
+      // end of string
+      break;
+    }
+    else
+    {
+#ifdef USART_RECEIVE_STRING_ECHO
+      // send back byte (echo)
+      usart_transmit_byte(data);
+#endif
+      
+      // normal byte, add to buffer and
+      // increment position pointer
+      buffer[pos] = data;
+      pos ++;
+    }
+  }
+
+  // set null terminator
+  buffer[pos] = 0;
+
+  return pos;
+}
+
 void usart_transmit_byte(unsigned char data)
 {
   // UDRE - [U]SART [D]ata [R]egister [E]mpty
