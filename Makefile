@@ -18,9 +18,12 @@ main.o : main.c
 
 usart.o : usart.c
 	$(CXX) -DF_CPU=$(FREQ) -g -mmcu=$(MCU_GCC) -Os -o $@ -c $<
+	
+shell.o : shell.c
+	$(CXX) -DF_CPU=$(FREQ) -g -mmcu=$(MCU_GCC) -Os -o $@ -c $<
 
-example.elf : main.o usart.o
-	$(CXX) main.o usart.o -g -mmcu=$(MCU_GCC) -o example.elf
+example.elf : main.o usart.o shell.o
+	$(CXX) main.o usart.o shell.o -g -mmcu=$(MCU_GCC) -o example.elf
 
 example.hex : example.elf
 	$(HEX) -j .text -j .data -O ihex $< $@
@@ -29,4 +32,4 @@ flash : example.hex
 	$(DUDE) -p $(MCU_DUDE) -vvvv -c arduino -P $(PORT) -b $(BAUD) -D -U flash:w:$<:i
 
 clean :
-	rm -f example.hex example.elf main.o usart.o
+	rm -f example.hex example.elf main.o usart.o shell.o

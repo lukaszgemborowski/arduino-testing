@@ -1,7 +1,7 @@
 #include "usart.h"
 #include <avr/io.h>
 
-void usart_init(unsigned short ubrr)
+void usart_init(uint16_t ubrr)
 {
   // set baudrate in UBR register
   UBRR0H = ubrr>>8;
@@ -31,7 +31,7 @@ unsigned char usart_receive_byte(void)
   return UDR0;
 }
 
-unsigned char usart_receive_string(char *buffer, unsigned short buffer_size)
+uint8_t usart_receive_string(char *buffer, uint8_t buffer_size)
 {
   unsigned short pos = 0;
   unsigned char data = 0;
@@ -43,6 +43,11 @@ unsigned char usart_receive_string(char *buffer, unsigned short buffer_size)
     if (data == '\r')
     {
       // end of string
+      
+#ifdef USART_RECEIVE_STRING_ECHO
+      // send end of line
+      usart_transmit_string("\r\n");
+#endif
       break;
     }
     else
